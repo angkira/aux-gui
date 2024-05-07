@@ -1,10 +1,12 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import {
   CameraConfig,
   DEFAULT_SCENE_CONFIG,
   LightConfig,
   SceneConfig,
+  SceneEnvironmentConfig,
 } from './DefaultScene.config';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 export class Scene {
   private scene: THREE.Scene = new THREE.Scene();
@@ -14,10 +16,16 @@ export class Scene {
 
   constructor(
     private container: HTMLElement,
-    private config: SceneConfig = DEFAULT_SCENE_CONFIG,
+    private config: SceneEnvironmentConfig = DEFAULT_SCENE_CONFIG,
   ) {}
 
+  configurateScene(config: SceneConfig) {
+    this.scene.background = config.background;
+  }
+
   init() {
+    this.configurateScene(this.config.scene);
+
     const light = this.config.light.map((lightConfig) =>
       this.initLight(lightConfig),
     );
@@ -27,7 +35,7 @@ export class Scene {
     this.scene.add(camera);
 
     const controls = this.initControls(this.config.controls, camera);
-    this.scene.add(controls);
+    controls.update();
 
     this.renderer.setSize(
       this.container.clientWidth,
@@ -35,6 +43,8 @@ export class Scene {
     );
 
     this.container.appendChild(this.renderer.domElement);
+
+    this.initAnimation(this.renderer, this.scene, camera, controls);
   }
 
   initLight(lightConfig: LightConfig) {
@@ -52,7 +62,7 @@ export class Scene {
 
     const camera = new cameraConfig.type(fov, aspect, near, far);
 
-    camera.position.set(0, 0, 5);
+    camera.position.set(500, 300, 100);
 
     return camera;
   }
@@ -66,4 +76,32 @@ export class Scene {
 
     return controls;
   }
+
+  initAnimation(
+    renderer: THREE.WebGLRenderer,
+    scene: THREE.Scene,
+    camera: THREE.Camera,
+    controls: OrbitControls,
+  ) {
+    const animate = () => {
+      requestAnimationFrame(animate);
+
+      // required if controls.enableDamping or controls.autoRotate are set to true
+      controls.update();
+
+      renderer.render(scene, camera);
+    };
+
+    animate();
+  }
+
+  addObject(object: THREE.Object3D) {
+    this.scene.add(object);
+  }
 }
+
+
+
+
+
+

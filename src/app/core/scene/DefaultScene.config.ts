@@ -1,9 +1,14 @@
 import {
   AmbientLight,
   Camera,
+  Color,
+  CubeTexture,
+  CubeTextureLoader,
   Light,
   PerspectiveCamera,
+  PointLight,
   SpotLight,
+  Texture,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
@@ -34,40 +39,55 @@ export type ControlsConfig = {
 };
 
 export type SceneConfig = {
-  camera: CameraConfig;
-  light: LightConfig[];
-  controls: ControlsConfig[];
+  background: Color | Texture | CubeTexture | null;
 };
 
-export const DEFAULT_SCENE_CONFIG: SceneConfig = {
+export type SceneEnvironmentConfig = {
+  camera: CameraConfig;
+  light: LightConfig[];
+  controls: ControlsConfig;
+  scene: SceneConfig;
+};
+
+const SCENE_BACKGROUND = new CubeTextureLoader().load([
+  'assets/scene/wall.png', // px.png',
+  'assets/scene/wall.png', // nx.png',
+  'assets/scene/wall.png', // py.png',
+  'assets/scene/floor.png', // pz.png',
+  'assets/scene/wall.png', // ny.png',
+  'assets/scene/wall.png', // nz.png',
+]);
+
+export const DEFAULT_SCENE_CONFIG: SceneEnvironmentConfig = {
+  scene: {
+    background: SCENE_BACKGROUND, // new Color(0xa4cde6),
+  },
   camera: {
     type: PerspectiveCamera,
     fov: 75,
     near: 0.1,
-    far: 1000,
+    far: 3000,
   },
   light: [
     {
       type: AmbientLight,
       color: 0xffffff,
-      intensity: 0.5,
+      intensity: 1,
     },
     {
-      type: SpotLight,
+      type: PointLight,
       color: 0xffffff,
-      intensity: 0.5,
+      intensity: 1,
       distance: 100,
       angle: Math.PI / 4,
       penumbra: 0.05,
       decay: 2,
     },
   ],
-  controls: [
-    {
-      type: OrbitControls,
-      enableDamping: true,
-      dampingFactor: 0.25,
-      enableZoom: true,
-    },
-  ],
+  controls: {
+    type: OrbitControls,
+    enableDamping: true,
+    dampingFactor: 0.25,
+    enableZoom: true,
+  },
 };

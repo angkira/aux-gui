@@ -7,5 +7,6 @@ import { FileLoaderService } from './FileLoader/FileLoader.service';
   imports: [CommonModule],
   providers: [FileLoaderService],
   declarations: [SceneComponent],
+  exports: [SceneComponent],
 })
 export class SceneModule {}

@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class APIService {
-  private baseUrl: string = environment.baseUrl;
+  private baseUrl: string = environment.baseUrl || '';
   private headers: HttpHeaders = new HttpHeaders({
     'Content-Type': 'application/json',
     Authorization: 'Bearer <your-token>',
